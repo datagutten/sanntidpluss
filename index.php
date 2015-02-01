@@ -1,5 +1,10 @@
 <!DOCTYPE html>
 <html>
+<head>
+<link href="sanntid.css" rel="stylesheet" type="text/css" />
+<title>Sanntid+</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
 <body>
   Holdeplass:
   <input type="text" name="holdeplass" id="holdeplass">
