@@ -2,6 +2,9 @@
 require 'preferences.php';
 require 'ruter_rest_class.php';
 $ruter=new ruter_rest;
+require 'sanntidpluss_class.php';
+$sanntidpluss=new sanntidpluss;
+
 if(!isset($_GET['stop']))
 	$stopname='Ingierkollveien';
 elseif(!is_numeric($_GET['stop']))
@@ -64,7 +67,9 @@ foreach($linedepartures as $line_number=>$line)
 		{
 			//print_r($departure);
 			//var_dump($departure['MonitoredVehicleJourney']['Monitored']);
-			$arrival=strtotime($departure['MonitoredVehicleJourney']['MonitoredCall']['ExpectedArrivalTime']);
+			$AimedArrivalTime=strtotime($departure['MonitoredVehicleJourney']['MonitoredCall']['AimedArrivalTime']);
+			$ExpectedArrivalTime=strtotime($departure['MonitoredVehicleJourney']['MonitoredCall']['ExpectedArrivalTime']);
+
 			if(strlen($departure['MonitoredVehicleJourney']['VehicleRef'])==6)
 				$vechile=substr($departure['MonitoredVehicleJourney']['VehicleRef'],2);
 			else
@@ -83,9 +88,24 @@ foreach($linedepartures as $line_number=>$line)
 
 				$showheader=false;
 				}
-				
+				if($AimedArrivalTime!=$ExpectedArrivalTime && $preferences['show_deviation_time']) //The departure is not on schedule
+				{
+					$ArrivalTimeDiff=$ExpectedArrivalTime-$AimedArrivalTime;
+					$deviation_time_fraction=$sanntidpluss->deviation_time_fraction($AimedArrivalTime,$ExpectedArrivalTime);
+					$deviation_time_details="Delay: ".date('i:s',$ArrivalTimeDiff)."\\n
+											AimedArrivalTime: {$departure['MonitoredVehicleJourney']['MonitoredCall']['AimedArrivalTime']}\\n
+											ExpectedArrivalTime: {$departure['MonitoredVehicleJourney']['MonitoredCall']['ExpectedArrivalTime']}\\n
+											Diff: $ArrivalTimeDiff";
+					$deviation_time_details=str_replace(array("\r","\n","\t"),'',$deviation_time_details);
+
+					$deviation_time_html="<span style=\"color:#ff0000\" onclick=\"alert('$deviation_time_details')\">$deviation_time_fraction</span> ";
+				}
+				else
+					$deviation_time_html='';
+
 				$class='item';
-				echo "\t\t\t<span class=\"$class\">".date('H:i',$arrival).' ('.$departure['MonitoredVehicleJourney']['BlockRef']."/$vechile)</span>\n";
+				
+				echo "\t\t\t<span class=\"$class\">".date('H:i',$ExpectedArrivalTime)." $deviation_time_html(".$departure['MonitoredVehicleJourney']['BlockRef']."/$vechile)</span>\n";
 			}
 		}
 if($showheader===false) //If no departures has been displayed $showheader will still be true
