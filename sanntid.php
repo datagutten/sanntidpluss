@@ -60,16 +60,8 @@ foreach($linedepartures as $line_number=>$line)
 {
 	foreach($line as $destination_name=>$direction)
 	{
-		?>
-		<li>
-		<div class="heading">
-        	<span class="numBox"><?php echo $line_number; ?></span>
-	        <span class="time"><?Php echo $destination_name; ?></span>
-        </div>
-		<div class="list">
-		<?Php
-
-		foreach($direction as $departure)
+		$showheader=true;
+		foreach($direction as $departurekey=>$departure)
 		{
 			//print_r($departure);
 			//var_dump($departure['MonitoredVehicleJourney']['Monitored']);
@@ -80,6 +72,20 @@ foreach($linedepartures as $line_number=>$line)
 				$vechile=$departure['MonitoredVehicleJourney']['VehicleRef'];
 			if($departure['MonitoredVehicleJourney']['Monitored']===true)
 			{
+				if($showheader) //Check if header should be displayed
+				{
+					?>
+					<li>
+					<div class="heading">
+						<span class="numBox"><?php echo $line_number; ?></span>
+						<span class="time"><?Php echo $destination_name; ?></span>
+					</div>
+					<div class="list">
+					<span style="display:none"><?Php print_r($direction); ?></span>
+					<?Php
+					$showheader=false;
+				}
+				
 				$class='item';
 				echo "<span class=\"$class\">".date('H:i',$arrival).' ('.$departure['MonitoredVehicleJourney']['BlockRef']."/$vechile)</span>";
 			}
