@@ -48,14 +48,12 @@ foreach($departures as $departure)
 </head>
 
 <body>
-
+<?Php echo "<h1>{$stopinfo['Name']}</h1>\n<h2>{$stopinfo['District']}</h2>\n"; ?>
 <section class="realtime">
 <ul>
-
 <?Php
 //print_r($stop);
 //echo $stop[0]
-echo "<h1>{$stopinfo['Name']}</h1>\n<h2>{$stopinfo['District']}</h2>\n";
 foreach($linedepartures as $line_number=>$line)
 {
 	foreach($line as $destination_name=>$direction)
@@ -74,34 +72,22 @@ foreach($linedepartures as $line_number=>$line)
 			{
 				if($showheader) //Check if header should be displayed
 				{
-					?>
-					<li>
-					<div class="heading">
-						<span class="numBox"><?php echo $line_number; ?></span>
-						<span class="time"><?Php echo $destination_name; ?></span>
-					</div>
-					<div class="list">
-					<span style="display:none"><?Php print_r($direction); ?></span>
-					<?Php
-					$showheader=false;
+					echo "\t<li>\n";
+					echo "\t\t<div class=\"heading\"><span class=\"numBox\">$line_number</span><span class=\"time\">$destination_name</span></div>\n";
+					echo "\t\t<div class=\"list\">\n";
+
+				$showheader=false;
 				}
 				
 				$class='item';
-				echo "<span class=\"$class\">".date('H:i',$arrival).' ('.$departure['MonitoredVehicleJourney']['BlockRef']."/$vechile)</span>";
+				echo "\t\t\t<span class=\"$class\">".date('H:i',$arrival).' ('.$departure['MonitoredVehicleJourney']['BlockRef']."/$vechile)</span>\n";
 			}
-			/*else
-			{
-				$class='item white';
-				echo "<span class=\"$class\">".date('H:i',$arrival)."</span>";
-
-			}*/
-			
-
 		}
-		?>
-        </div>
-		</li>
-		<?Php
+if($showheader===false) //If no departures has been displayed $showheader will still be true
+{
+	echo "\t\t</div>\n";
+	echo "\t</li>\n";
+}
 	}
 }
 ?>
