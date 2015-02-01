@@ -53,7 +53,8 @@ section.realtime>ul>li .heading {
 section.realtime>ul>li .list {
 	height:50px;
 	color:#fed100;
-	line-height:50x
+	line-height:50x;
+	overflow:hidden;
 }
 /*Tidspunkt i sanntid*/
 section.realtime>ul>li .list .item {
