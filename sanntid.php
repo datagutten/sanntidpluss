@@ -1,4 +1,5 @@
 <?Php
+require 'preferences.php';
 require 'ruter_rest_class.php';
 $ruter=new ruter_rest;
 if(!isset($_GET['stop']))
@@ -72,8 +73,12 @@ foreach($linedepartures as $line_number=>$line)
 			{
 				if($showheader) //Check if header should be displayed
 				{
+					if(!empty($departure['Extensions']['LineColour']) && $preferences['show_line_colors'])
+						$numbox_style=" style=\"background:#{$departure['Extensions']['LineColour']}\"";
+					else
+						$numbox_style='';
 					echo "\t<li>\n";
-					echo "\t\t<div class=\"heading\"><span class=\"numBox\">$line_number</span><span class=\"time\">$destination_name</span></div>\n";
+					echo "\t\t<div class=\"heading\"><span class=\"numBox\"$numbox_style>$line_number</span><span class=\"time\">$destination_name</span></div>\n";
 					echo "\t\t<div class=\"list\">\n";
 
 				$showheader=false;
