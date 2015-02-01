@@ -1,5 +1,5 @@
 <?Php
-require '../trafikanten/ruter_rest_class.php';
+require 'ruter_rest_class.php';
 $ruter=new ruter_rest;
 if(!isset($_GET['stop']))
 	$stopname='Ingierkollveien';
