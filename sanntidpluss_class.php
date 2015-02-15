@@ -1,5 +1,6 @@
 <?Php
-class sanntidpluss
+require_once 'ruter_rest_class.php';
+class sanntidpluss extends ruter_rest
 {
 	public function deviation_time_fraction($AimedArrivalTime,$ExpectedArrivalTime) //Show the delay with a minute number and a second fraction like on the drivers display
 	{
@@ -25,3 +26,4 @@ class sanntidpluss
 		return $delaystring;	
 	}
 }
+?>

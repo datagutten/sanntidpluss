@@ -1,7 +1,5 @@
 <?Php
 require 'preferences.php';
-require 'ruter_rest_class.php';
-$ruter=new ruter_rest;
 require 'sanntidpluss_class.php';
 $sanntidpluss=new sanntidpluss;
 
@@ -14,12 +12,12 @@ else
 
 if(!isset($stopid))
 {
-	$stop=$ruter->get('Place/GetPlaces/'.urlencode($stopname));
+	$stop=$sanntidpluss->get('Place/GetPlaces/'.urlencode($stopname));
 	$stopid=$stop[0]['ID'];
 }
 
-$departures=$ruter->get('StopVisit/GetDepartures/'.$stopid);
-$stopinfo=$ruter->get("Place/GetStop/$stopid");
+$departures=$sanntidpluss->get('StopVisit/GetDepartures/'.$stopid);
+$stopinfo=$sanntidpluss->get("Place/GetStop/$stopid");
 ///print_r($stopinfo);
 foreach($departures as $departure)
 {
