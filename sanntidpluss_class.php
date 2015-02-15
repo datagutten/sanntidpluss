@@ -29,5 +29,16 @@ class sanntidpluss extends ruter_rest
 		$delaystring.=$fraction;
 		return $delaystring;	
 	}
+	public function getdepartures($stopid,$only_monitored=true)
+	{
+		$departures=$this->get('StopVisit/GetDepartures/'.$stopid);
+		foreach($departures as $departure)
+		{
+			if($departure['MonitoredVehicleJourney']['Monitored']!=1)
+				continue;
+			$linedepartures[$departure['MonitoredVehicleJourney']['LineRef']][$departure['MonitoredVehicleJourney']['DestinationName']][]=$departure;
+		}
+		return $linedepartures;
+	}
 }
 ?>

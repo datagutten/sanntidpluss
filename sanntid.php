@@ -16,16 +16,7 @@ if(!isset($stopid))
 	$stopid=$stop[0]['ID'];
 }
 
-$departures=$sanntidpluss->get('StopVisit/GetDepartures/'.$stopid);
-$stopinfo=$sanntidpluss->get("Place/GetStop/$stopid");
-///print_r($stopinfo);
-foreach($departures as $departure)
-{
-	//if($departure['MonitoredVehicleJourney']['Monitored']!==true)
-		//continue;
-	$linedepartures[$departure['MonitoredVehicleJourney']['LineRef']][$departure['MonitoredVehicleJourney']['DestinationName']][]=$departure;
-}
-//print_r($departures);
+$linedepartures=$sanntidpluss->getdepartures($stopid);
 ?>
 <!DOCTYPE HTML>
 <html>
