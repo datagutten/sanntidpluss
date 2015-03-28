@@ -58,12 +58,14 @@ function getdata(url)
 	{ 
 		if (request.readyState == 4 && request.status == 200) 
 		{ 
-			var resultat = JSON.parse(request.responseText); 
-			var utdata = ""; 
+			var stops = JSON.parse(request.responseText);
+			var utdata = "";
 
-			for(var i=0; i<resultat.length; i++) 
+			for(var i=0; i<stops.length; i++)
 			{ 
-			 	utdata+="<a href='sanntid.php?stop="+resultat[i].ID+"' class='button'><div id='linjeLink'>"+resultat[i].Name+"</div></a><hr />";
+				if(stops[i].RealTimeStop!=true)
+					continue;
+				utdata+="<a href='sanntid.php?stop="+stops[i].ID+"' class='button'><div id='linjeLink'>"+stops[i].Name+" ("+stops[i].District+")</div></a><hr />";
  			}
  
  			document.getElementById("holdeplasser").innerHTML = utdata;
