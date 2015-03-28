@@ -2,11 +2,13 @@
 require 'sanntidpluss_class.php';
 require 'preferences.php';
 $sanntidpluss=new sanntidpluss;
+
 //$departures_by_line=$sanntidpluss->getdepartures($_GET['stop']);
 $departures=$sanntidpluss->get('StopVisit/GetDepartures/'.$stopid=$_GET['stop']);
 $stopinfo=$sanntidpluss->get("Place/GetStop/$stopid");
 
-$dom=new DOMDocument;
+require 'domcustom.php';
+$dom=new DOMCustom;
 $dom->loadHTMLFile('template.htm');
 
 /*$dom = DOMImplementation::createDocument(null, 'html',
@@ -92,16 +94,28 @@ foreach($departures as $key=>$departure)
 		$div_departures[$linedirection]->setAttribute('class','list');
 		$li_departure[$linedirection]->appendChild($div_departures[$linedirection]);
 	}
+
 	$AimedArrivalTime=strtotime($departure['MonitoredVehicleJourney']['MonitoredCall']['AimedArrivalTime']);
 	$ExpectedArrivalTime=strtotime($departure['MonitoredVehicleJourney']['MonitoredCall']['ExpectedArrivalTime']);
 
-	$span_departure=$dom->createElement('span',date('H:i',$ExpectedArrivalTime).' (');
-	
-	if(!empty($departure['MonitoredVehicleJourney']['BlockRef'])) //Add the block ref (vognløp)
+	$span_departure=$dom->createElement('span',date('H:i',$ExpectedArrivalTime).' ');
+
+	if($AimedArrivalTime!=$ExpectedArrivalTime) //Deviation time
 	{
-		$span_blockref=$dom->createElement('span',"{$departure['MonitoredVehicleJourney']['BlockRef']}");
-		$span_departure->appendChild($span_blockref);
+		$ArrivalTimeDiff=$ExpectedArrivalTime-$AimedArrivalTime;
+		//Popup with debug information
+		$popuptext="Delay: $symbol".date('i:s',$ArrivalTimeDiff)."\\n
+		AimedArrivalTime: {$departure['MonitoredVehicleJourney']['MonitoredCall']['AimedArrivalTime']}\\n
+		ExpectedArrivalTime: {$departure['MonitoredVehicleJourney']['MonitoredCall']['ExpectedArrivalTime']}\\n
+		Diff: $ArrivalTimeDiff";
+		$popuptext=str_replace(array("\r","\n","\t"),'',$popuptext);
+
+		$deviation_time=$sanntidpluss->deviation_time_fraction($AimedArrivalTime,$ExpectedArrivalTime);
+		$span_deviation_time=$dom->createElement_simple('span',$span_departure,array('style'=>'color:#ff0000','onclick'=>"alert('$popuptext')"),$deviation_time.' ');
 	}
+
+	if(!empty($departure['MonitoredVehicleJourney']['BlockRef'])) //Add the block ref (vognløp)
+		$span_blockref=$dom->createElement_simple('span',$span_departure,array('class'=>'blockref'),'('.$departure['MonitoredVehicleJourney']['BlockRef']);
 
 	if(!empty($departure['MonitoredVehicleJourney']['VehicleRef'])) //Add the vechile ref
 	{
@@ -110,9 +124,10 @@ foreach($departures as $key=>$departure)
 		else
 			$vechile=$departure['MonitoredVehicleJourney']['VehicleRef'];
 		if(isset($span_blockref))
-			$span_vechile=$dom->createElement('span',"/$vechile");
+			$prefix='/';
 		else
-			$span_vechile=$dom->createElement('span',"$vechile");
+			$prefix='(';
+		$span_vechile=$dom->createElement_simple('span',$span_departure,array('onclick'=>"vechileInfo($vechile)",'class'=>'vechile'),$prefix.$vechile);
 		$span_vechile->setAttribute('onclick',"vechileInfo($vechile)");
 		$span_departure->appendChild($span_vechile);
 	}
@@ -124,11 +139,7 @@ foreach($departures as $key=>$departure)
 	$div_departures[$linedirection]->appendChild($span_departure);
 
 	//$div_header
-	
 }
-
-
-
 
 echo $dom->saveXML($html);
 ?>
