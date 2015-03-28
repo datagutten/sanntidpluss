@@ -65,7 +65,7 @@ function getdata(url)
 			{ 
 				if(stops[i].RealTimeStop!=true)
 					continue;
-				utdata+="<a href='sanntid.php?stop="+stops[i].ID+"' class='button'><div id='linjeLink'>"+stops[i].Name+" ("+stops[i].District+")</div></a><hr />";
+				utdata+="<a href='sanntid_dom.php?stop="+stops[i].ID+"' class='button'><div id='linjeLink'>"+stops[i].Name+" ("+stops[i].District+")</div></a><hr />";
  			}
  
  			document.getElementById("holdeplasser").innerHTML = utdata;
