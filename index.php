@@ -33,7 +33,7 @@ function getLocation() {
 function finnholdeplasser_navn()
 {
 	var holdeplass = document.getElementById('holdeplass');
-	getdata("hent_data.php?navn="+holdeplass.value);
+	getdata("hent_data.php?navn="+encodeURI(holdeplass.value));
 }
 
 function finnholdeplasser_gps(position) 
