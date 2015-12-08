@@ -11,6 +11,7 @@ class ruter_rest
 	}
 	function get($uri,$nodecode=false)
 	{
+		$uri=str_replace('+','%20',$uri);
 		curl_setopt($this->ch,CURLOPT_URL,'http://reisapi.ruter.no/'.$uri);
 		if($nodecode===false)
 			return json_decode(curl_exec($this->ch),true);
