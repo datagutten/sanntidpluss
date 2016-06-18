@@ -63,7 +63,7 @@ function getdata(url)
 
 			for(var i=0; i<stops.length; i++)
 			{ 
-				if(stops[i].RealTimeStop!=true)
+				if(stops[i].PlaceType!='Stop')
 					continue;
 				utdata+="<a href='sanntid_dom.php?stop="+stops[i].ID+"' class='button'><div id='linjeLink'>"+stops[i].Name+" ("+stops[i].District+")</div></a><hr />";
  			}
