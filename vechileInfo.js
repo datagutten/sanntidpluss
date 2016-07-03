@@ -16,22 +16,19 @@ function expectedVechile(vechile,line)
 }
 function checkVechiles()
 {
-	//var vechiles=document.getElementsByClassName('vechile');
 	var departures=document.getElementsByClassName('item');
 	var departure;
 	var key;
 	var vechile;
 	var vechileNumber;
 	var vechileInfo;
-	console.log(departures);
+
 	for (var i=0; i<departures.length; i++)
 	{
-		//console.log(i);
 		departure=departures.item(i);
 		key=departure.id;
 		vechile=departure.childNodes.item(4);
 		vechileNumber=Number(vechile.textContent);
-		console.log(vechile.textContent);
 		vechileInfo=vechileType(vechileNumber);
 		
 		var lineNumber=departure.parentNode.parentNode.childNodes.item(1).childNodes.item(1).textContent;
@@ -41,7 +38,6 @@ function checkVechiles()
 			vechile.setAttribute('style','color: #FF0000');
 		}
 	}
-	//console.log(vechiles);
 }
 function vechile_onclick(vechile,line,operator,object)
 {
