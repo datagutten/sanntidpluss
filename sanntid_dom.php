@@ -96,7 +96,7 @@ foreach($departures as $key=>$departure)
 
 	if($AimedArrivalTime!=$ExpectedArrivalTime) //Deviation time
 	{
-		$ArrivalTimeDiff=$ExpectedArrivalTime-$AimedArrivalTime;
+		$ArrivalTimeDiff=abs($ExpectedArrivalTime-$AimedArrivalTime);
 		//Popup with debug information
 		$popuptext="Delay: ".date('i:s',$ArrivalTimeDiff)."\\n
 		AimedArrivalTime: {$departure['MonitoredVehicleJourney']['MonitoredCall']['AimedArrivalTime']}\\n

@@ -8,8 +8,8 @@ class sanntidpluss extends ruter_rest
 	}
 	public function deviation_time_fraction($AimedArrivalTime,$ExpectedArrivalTime) //Show the delay with a minute number and a second fraction like on the drivers display
 	{
-		$ArrivalTimeDiff=$ExpectedArrivalTime-$AimedArrivalTime;
-		if($ExpectedArrivalTime<$AimedArrivalTime)
+		$ArrivalTimeDiff=abs($ExpectedArrivalTime-$AimedArrivalTime); //Diff should always be positive to show correct delay.
+		if($ExpectedArrivalTime<$AimedArrivalTime) //Before of after schedule?
 			$symbol='+';
 		else
 			$symbol='-';
@@ -27,7 +27,7 @@ class sanntidpluss extends ruter_rest
 		$delaystring=$symbol;
 		$delaystring.=(int)date('i',$ArrivalTimeDiff);
 		$delaystring.=$fraction;
-		return $delaystring;	
+		return $delaystring;
 	}
 	public function getdepartures($stopid,$only_monitored=true)
 	{
