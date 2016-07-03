@@ -1,19 +1,65 @@
-function vechileInfo(vechile)
+function rangecheck(value,low,high)
 {
-	if(vechile>=1100 && vechile<=1105) //Bekreftet 1102, 1105
-		alert('Man Lions City');
-	else if(vechile>=1150 && vechile<=1165)
-		alert('Solaris Urbino 12');
-	else if(vechile>=1200 && vechile<=1209) //Bekreftet 1201, 1203, 1204
-		alert('Hybrid (Solaris Urbino 18)');
-	else if(vechile>=1210 && vechile<=1220) //Bekreftet 1214
-		alert('Hybrid (Solaris Urbino 12)');
-	else if(vechile>=1230 && vechile<=1234) //Bekreftet
-		alert('Hydrogen (Van Hool)');
-	else if(vechile>=1250 && vechile<=1310) //Bekreftet 1256, 1258, 1267, 1307
-		alert('Gass (Volvo 7700)');
-	else if(vechile<=1200)
-		alert('Diesel');
+	if(value>=low && value<=high)
+		return true;
 	else
-		alert(vechile);
+		return false;
+}
+function expectedVechile(vechile,line)
+{
+	var unexpected=false;;
+	if(line==83 && vechile!='Volvo 8700')
+	{
+		unexpected=true;
+	}
+	return unexpected;
+}
+function checkVechiles()
+{
+	//var vechiles=document.getElementsByClassName('vechile');
+	var departures=document.getElementsByClassName('item');
+	var departure;
+	var key;
+	var vechile;
+	var vechileNumber;
+	var vechileInfo;
+	console.log(departures);
+	for (var i=0; i<departures.length; i++)
+	{
+		//console.log(i);
+		departure=departures.item(i);
+		key=departure.id;
+		vechile=departure.childNodes.item(4);
+		vechileNumber=Number(vechile.textContent);
+		console.log(vechile.textContent);
+		vechileInfo=vechileType(vechileNumber);
+		
+		var lineNumber=departure.parentNode.parentNode.childNodes.item(1).childNodes.item(1).textContent;
+		
+		if(vechileInfo[1]!==false && vechileInfo[1].indexOf(lineNumber)<0)
+		{
+			vechile.setAttribute('style','color: #FF0000');
+		}
+	}
+	//console.log(vechiles);
+}
+function vechile_onclick(vechile,line,operator,object)
+{
+	var type=vechileType(vechile);
+	if(type[1]===false)
+	{
+		alert(type[0]+"\n");
+	}
+	else
+	{
+		if(type[1].indexOf(line)<0)
+		{
+			alert(type[0]+"\nDenne busstypen er ikke forventet på linje "+line);
+		}
+		else
+		{
+			alert(type[0]);
+		}
+	}
+	
 }

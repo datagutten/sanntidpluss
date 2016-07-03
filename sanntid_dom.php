@@ -25,13 +25,8 @@ $meta_format_detection->setAttribute('name','format-detection');
 $meta_format_detection->setAttribute('content','telephone=no');
 $head->appendChild($meta_format_detection);
 
-
-/*<script type="text/javascript" src="sanntid.js"></script>*/
-$script=$dom->createElement('script',' ');
-$script->setAttribute('type','text/javascript');
-$script->setAttribute('src','vechileInfo.js');
-$head->appendChild($script);
-
+$dom->createElement_simple('script',$head,array('type'=>'text/javascript','src'=>'vechileType.js'),' ');
+$dom->createElement_simple('script',$head,array('type'=>'text/javascript','src'=>'vechileInfo.js'),' ');
 
 //<meta name="viewport" content="width=device-width, initial-scale=1">
 /*$meta_viewport=$dom->createElement('meta');
@@ -47,8 +42,7 @@ $title=$dom->createElement('title',"Sanntid+ {$stopinfo['Name']} ({$stopinfo['Di
 $head->appendChild($title);
 
 
-$body = $dom->createElement('body');
-$html->appendChild($body);
+$body = $dom->createElement_simple('body',$html,array('onload'=>'checkVechiles()'));
 $array=$dom->createElement('span',print_r($departures,true));
 $array->setAttribute('style','display:none');
 $body->appendChild($array);
@@ -60,8 +54,7 @@ $section_realtime=$dom->createElement('section');
 $section_realtime->setAttribute('class','realtime');
 $body->appendChild($section_realtime);
 
-$list=$dom->createElement('ul');
-$section_realtime->appendChild($list);
+$list=$dom->createElement_simple('ul',$section_realtime,array('id'=>'departures'));
 
 foreach($departures as $key=>$departure)
 {
@@ -70,20 +63,18 @@ foreach($departures as $key=>$departure)
 	$linedirection=$departure['MonitoredVehicleJourney']['LineRef'].'-'.$departure['MonitoredVehicleJourney']['DirectionRef']; //Make a string to use as key for line and direction
 	if(!isset($li_departure[$linedirection]))
 	{
-		$li_departure[$linedirection]=$dom->createElement('li'); //Create a new list element
-		$list->appendChild($li_departure[$linedirection]); //Add the list element to the list
+		$li_departure[$linedirection]=$dom->createElement_simple('li',$list,array('id'=>$key)); //Create a new list element and add the list element to the list
 		
 		$div_header=$dom->createElement('div'); //Create the header div
 		$li_departure[$linedirection]->appendChild($div_header); //Add the header div to the list element
 		
 		$div_header->setAttribute('class','heading');
 		//Make the box with the line number
-		$span_numbox=$dom->createElement('span',$departure['MonitoredVehicleJourney']['PublishedLineName']);
+		$span_numbox=$dom->createElement_simple('span',$div_header,array('id'=>'line_number_'.$key),$departure['MonitoredVehicleJourney']['PublishedLineName']);
 		$span_numbox->setAttribute('class','numBox');
 
 		if(!empty($departure['Extensions']['LineColour']) && $preferences['show_line_colors'])
 			$span_numbox->setAttribute('style',"background:#{$departure['Extensions']['LineColour']}");
-		$div_header->appendChild($span_numbox);
 		
 		//Add the destination name
 		$span_destination=$dom->createElement('span',$departure['MonitoredVehicleJourney']['DestinationName']);
@@ -100,11 +91,14 @@ foreach($departures as $key=>$departure)
 
 	$span_departure=$dom->createElement('span',date('H:i',$ExpectedArrivalTime).' ');
 
+	if($departure['MonitoredVehicleJourney']['OperatorRef']=='NSB' || $departure['MonitoredVehicleJourney']['OperatorRef']=='FLY')
+		$span_deviation_time=$dom->createElement_simple('span',$span_departure,array('style'=>'display: none'),'placeholder'); //Dummy span to avoid javascript attemping to identify vechiles for trains
+
 	if($AimedArrivalTime!=$ExpectedArrivalTime) //Deviation time
 	{
 		$ArrivalTimeDiff=$ExpectedArrivalTime-$AimedArrivalTime;
 		//Popup with debug information
-		$popuptext="Delay: $symbol".date('i:s',$ArrivalTimeDiff)."\\n
+		$popuptext="Delay: ".date('i:s',$ArrivalTimeDiff)."\\n
 		AimedArrivalTime: {$departure['MonitoredVehicleJourney']['MonitoredCall']['AimedArrivalTime']}\\n
 		ExpectedArrivalTime: {$departure['MonitoredVehicleJourney']['MonitoredCall']['ExpectedArrivalTime']}\\n
 		Diff: $ArrivalTimeDiff";
@@ -113,10 +107,12 @@ foreach($departures as $key=>$departure)
 		$deviation_time=$sanntidpluss->deviation_time_fraction($AimedArrivalTime,$ExpectedArrivalTime);
 		$span_deviation_time=$dom->createElement_simple('span',$span_departure,array('style'=>'color:#ff0000','onclick'=>"alert('$popuptext')"),$deviation_time.' ');
 	}
-
+	else
+		$span_deviation_time=$dom->createElement_simple('span',$span_departure,array('style'=>'display: none'),'placeholder'); //Dummy span to keep number of spans consistent
 	if(!empty($departure['MonitoredVehicleJourney']['BlockRef'])) //Add the block ref (vognløp)
 		$span_blockref=$dom->createElement_simple('span',$span_departure,array('class'=>'blockref'),'('.$departure['MonitoredVehicleJourney']['BlockRef']);
-
+	else
+		$dom->createElement_simple('span',$span_departure,array('style'=>'display: none'),'placeholder'); //Dummy span to keep number of spans consistent
 	if(!empty($departure['MonitoredVehicleJourney']['VehicleRef'])) //Add the vechile ref
 	{
 		if(strlen($departure['MonitoredVehicleJourney']['VehicleRef'])==6)
@@ -127,8 +123,9 @@ foreach($departures as $key=>$departure)
 			$prefix='/';
 		else
 			$prefix='(';
-		$span_vechile=$dom->createElement_simple('span',$span_departure,array('onclick'=>"vechileInfo($vechile)",'class'=>'vechile'),$prefix.$vechile);
-		$span_vechile->setAttribute('onclick',"vechileInfo($vechile)");
+		$span_departure->appendChild($dom->createTextNode($prefix));
+		
+		$span_vechile=$dom->createElement_simple('span',$span_departure,array('onclick'=>sprintf("vechile_onclick('%s','%s','%s')",$vechile,$departure['MonitoredVehicleJourney']['PublishedLineName'],$departure['MonitoredVehicleJourney']['OperatorRef']),'class'=>'vechile','id'=>'vechile_'.$key),$vechile);
 		$span_departure->appendChild($span_vechile);
 	}
 	
