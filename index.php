@@ -21,7 +21,7 @@ function getLocation() {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(finnholdeplasser_gps,showError);
     } else {
-        x.innerHTML = "Geolocation is not supported by this browser.";
+        x.innerHTML = "Geolokasjon er ikke støttet av denne nettleseren.";
     }
 }
 
@@ -78,16 +78,16 @@ function getdata(url)
 function showError(error) {
     switch(error.code) {
         case error.PERMISSION_DENIED:
-            x.innerHTML = "User denied the request for Geolocation."
+            x.innerHTML = "Bruker godtok ikke forespørselen om posisjonstilgang."
             break;
         case error.POSITION_UNAVAILABLE:
-            x.innerHTML = "Location information is unavailable."
+            x.innerHTML = "Posisjonsinformasjon er ikke tilgjengelig"
             break;
         case error.TIMEOUT:
-            x.innerHTML = "The request to get user location timed out."
+            x.innerHTML = "Forespørselen om posisjon fikk tidsavbrudd"
             break;
         case error.UNKNOWN_ERROR:
-            x.innerHTML = "An unknown error occurred."
+            x.innerHTML = "En ukjent feil oppstod"
             break;
     }
 }
