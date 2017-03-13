@@ -38,7 +38,10 @@ class sanntidpluss extends ruter_rest
 				continue;
 			$linedepartures[$departure['MonitoredVehicleJourney']['LineRef']][$departure['MonitoredVehicleJourney']['DestinationName']][]=$departure;
 		}
-		return $linedepartures;
+		if(!empty($linedepartures))
+			return $linedepartures;
+		else
+			return false;
 	}
 }
 ?>
